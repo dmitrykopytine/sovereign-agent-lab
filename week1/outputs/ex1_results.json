@@ -3,22 +3,22 @@
   "model_small": "meta-llama/Meta-Llama-3.1-8B-Instruct",
   "part_a": {
     "PLAIN": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 180,
+      "answer": "The Albanach",
+      "tokens": 184,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "PLAIN"
     },
     "XML": {
       "answer": "The Albanach",
-      "tokens": 251,
+      "tokens": 256,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
       "answer": "The Albanach",
-      "tokens": 289,
+      "tokens": 299,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "SANDWICH"
@@ -26,22 +26,22 @@
   },
   "part_b": {
     "PLAIN": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 213,
+      "answer": "The Albanach",
+      "tokens": 217,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "PLAIN"
     },
     "XML": {
       "answer": "The Albanach",
-      "tokens": 302,
+      "tokens": 307,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
       "answer": "The Albanach",
-      "tokens": 340,
+      "tokens": 350,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "SANDWICH"
@@ -50,22 +50,22 @@
   "part_c_was_run": true,
   "part_c": {
     "PLAIN": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 188,
+      "answer": "The Guilford Arms",
+      "tokens": 193,
       "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-      "correct": true,
+      "correct": false,
       "condition": "PLAIN"
     },
     "XML": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 278,
+      "answer": "The Albanach",
+      "tokens": 282,
       "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 316,
+      "answer": "The Albanach",
+      "tokens": 325,
       "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
       "correct": true,
       "condition": "SANDWICH"
