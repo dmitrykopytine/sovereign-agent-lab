@@ -69,7 +69,7 @@ flows:
   # When the manager asks about something outside the booking (parking,
   # AV equipment, menus, etc.), this flow triggers.
   # CALM's LLM recognises off-topic requests and routes here automatically.
-  handle_out_of_scope:
+handle_out_of_scope:
     description: >
       Handle requests that are outside the scope of booking confirmation,
       such as questions about parking, AV equipment, seating arrangements,

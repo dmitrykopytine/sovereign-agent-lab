@@ -36,6 +36,8 @@ about failures depends entirely on what these functions return.
 import json
 import requests
 from langchain_core.tools import tool
+from openai import OpenAI
+import os
 
 # ─── Venue database ───────────────────────────────────────────────────────────
 # In Week 2 this gets replaced with a real web search.
@@ -180,43 +182,30 @@ def generate_event_flyer(venue_name: str, guest_count: int, event_theme: str) ->
     guest_count: confirmed number of attendees
     event_theme: short description, e.g. 'AI Meetup, professional, Scottish'
     """
-    # ── TODO: Replace this stub with a real images.generate() call ───────────
-    #
-    # 1. Import OpenAI at the top of this file:
-    #      from openai import OpenAI
-    #      import os
-    #
-    # 2. Create the client:
-    #      client = OpenAI(
-    #          base_url="https://api.tokenfactory.nebius.com/v1/",
-    #          api_key=os.getenv("NEBIUS_KEY"),
-    #      )
-    #
-    # 3. Build the prompt — include venue name, guest count, event theme:
-    #      prompt = (
-    #          f"Professional event flyer for {event_theme} at {venue_name}, "
-    #          f"Edinburgh. {guest_count} guests tonight. Warm lighting, "
-    #          f"Scottish architecture background, clean modern typography."
-    #      )
-    #
-    # 4. Call the image API:
-    #      response = client.images.generate(
-    #          model="black-forest-labs/flux-schnell",
-    #          prompt=prompt,
-    #          n=1,
-    #      )
-    #      url = response.data[0].url
-    #
+    client = OpenAI(
+        base_url="https://api.tokenfactory.nebius.com/v1/",
+        api_key=os.getenv("NEBIUS_KEY"),
+    )
+
+    prompt = (
+        f"Professional event flyer for {event_theme} at {venue_name}, "
+        f"Edinburgh. {guest_count} guests tonight. Warm lighting, "
+        f"Scottish architecture background, clean modern typography."
+    )
+
+    response = client.images.generate(
+        model="black-forest-labs/flux-schnell",
+        prompt=prompt,
+        n=1,
+    )
+    url = response.data[0].url
+    
     # 5. Return a dict with at minimum: success, prompt_used, image_url
     #    On failure, return: success=False, error=str(e), prompt_used, image_url=""
     #
     # When implemented, the mechanical check in grade.py will pass automatically.
     # ──────────────────────────────────────────────────────────────────────────
 
-    prompt = (
-        f"Professional event flyer for {event_theme} at {venue_name}, "
-        f"Edinburgh. {guest_count} guests."
-    )
     return json.dumps({
         "success": False,
         "error": "STUB — see TODO in sovereign_agent/tools/venue_tools.py",
