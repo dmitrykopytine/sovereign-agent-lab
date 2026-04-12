@@ -24,7 +24,7 @@ PART_A_SANDWICH_CORRECT = True
 # Explain what you observed. Minimum 30 words.
 
 PART_A_EXPLANATION = """
-The selected model meta-llama/Llama-3.3-70B-Instruct is bi enough and well-trained on a wide range of inputs.
+The selected model meta-llama/Llama-3.3-70B-Instruct is big enough and well-trained on a wide range of inputs.
 So it managed to find the right pub name with any input format (plain, XML, sandwich).
 """
 

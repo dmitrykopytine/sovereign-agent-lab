@@ -1,0 +1,98 @@
+{
+  "server_script": "/Users/dm9/httpdocs/sovereign-agent-lab/sovereign_agent/tools/mcp_venue_server.py",
+  "tools_discovered": [
+    "search_venues",
+    "get_venue_details"
+  ],
+  "queries": {
+    "query_1": {
+      "query": "Find Edinburgh venues for 160 guests with vegan options and give me the full address of the best match.",
+      "trace": [
+        {
+          "role": "human",
+          "content": "Find Edinburgh venues for 160 guests with vegan options and give me the full address of the best match."
+        },
+        {
+          "role": "ai",
+          "content": "{\"name\": \"search_venues\", \"arguments\": {\"min_capacity\": \"160\", \"requires_vegan\": \"True\"}}"
+        },
+        {
+          "role": "tool_call",
+          "tool": "search_venues",
+          "args": {
+            "min_capacity": "160",
+            "requires_vegan": "True"
+          }
+        },
+        {
+          "role": "tool",
+          "content": "{\"matches\": [{\"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}], \"count\": 1}"
+        },
+        {
+          "role": "ai",
+          "content": "{\"name\": \"get_venue_details\", \"arguments\": {\"pub_name\": \"The Haymarket Vaults\"}}"
+        },
+        {
+          "role": "tool_call",
+          "tool": "get_venue_details",
+          "args": {
+            "pub_name": "The Haymarket Vaults"
+          }
+        },
+        {
+          "role": "tool",
+          "content": "{\"success\": true, \"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}"
+        },
+        {
+          "role": "ai",
+          "content": "The best match for your event is The Haymarket Vaults, located at 1 Dalry Road, Edinburgh."
+        }
+      ]
+    },
+    "query_2": {
+      "query": "Find a venue for 300 people with vegan options.",
+      "trace": [
+        {
+          "role": "human",
+          "content": "Find a venue for 300 people with vegan options."
+        },
+        {
+          "role": "ai",
+          "content": "{\"name\": \"search_venues\", \"arguments\": {\"min_capacity\": \"300\", \"requires_vegan\": \"true\"}}"
+        },
+        {
+          "role": "tool_call",
+          "tool": "search_venues",
+          "args": {
+            "min_capacity": "300",
+            "requires_vegan": "true"
+          }
+        },
+        {
+          "role": "tool",
+          "content": "{\"matches\": [], \"count\": 0}"
+        },
+        {
+          "role": "ai",
+          "content": "It seems that there are no available venues in Edinburgh that can accommodate 300 people and offer vegan options. Let me try searching for venues that can accommodate 300 people, regardless of dietary requirements.\n\n{\"name\": \"search_venues\", \"arguments\": {\"min_capacity\": \"300\", \"requires_vegan\": \"false\"}}"
+        },
+        {
+          "role": "tool_call",
+          "tool": "search_venues",
+          "args": {
+            "min_capacity": "300",
+            "requires_vegan": "false"
+          }
+        },
+        {
+          "role": "tool",
+          "content": "{\"matches\": [], \"count\": 0}"
+        },
+        {
+          "role": "ai",
+          "content": "It appears that there are no available venues in Edinburgh that can accommodate 300 people, regardless of dietary requirements. The search results are empty."
+        }
+      ]
+    }
+  }
+}

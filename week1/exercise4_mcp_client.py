@@ -38,10 +38,16 @@ import os
 import sys
 from pathlib import Path
 
+import warnings
+
 from dotenv import load_dotenv
 from langchain_core.tools import StructuredTool
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+
+warnings.filterwarnings("ignore", message=".*create_react_agent.*")
+from langgraph.prebuilt import create_react_agent  # noqa: E402
+
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -64,6 +70,16 @@ OUTPUTS_DIR.mkdir(exist_ok=True)
 # Each closure must capture its own tool_name. If we used a lambda in a loop,
 # every closure would share the last value of tool_name — a classic Python gotcha.
 
+def _run_async(coro):
+    """Run a coroutine safely — works both outside and inside a running loop."""
+    try:
+        return asyncio.run(coro)
+    except RuntimeError:
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+            return pool.submit(asyncio.run, coro).result()
+
+
 def _make_mcp_caller(tool_name: str, server_script: str):
     def call(**kwargs) -> str:
         async def _inner() -> str:
@@ -73,7 +89,7 @@ def _make_mcp_caller(tool_name: str, server_script: str):
                     await session.initialize()
                     result = await session.call_tool(tool_name, kwargs)
                     return result.content[0].text if result.content else "{}"
-        return asyncio.run(_inner())
+        return _run_async(_inner())
     call.__name__ = tool_name
     return call
 
@@ -109,6 +125,10 @@ def extract_trace(result: dict) -> list:
     for m in result["messages"]:
         role    = getattr(m, "type", "unknown")
         content = m.content
+        if hasattr(m, "tool_calls") and m.tool_calls:
+            for tc in m.tool_calls:
+                trace.append({"role": "tool_call", "tool": tc["name"],
+                              "args": tc.get("args", {})})
         if isinstance(content, list):
             for block in content:
                 if isinstance(block, dict) and block.get("type") == "tool_use":
@@ -129,6 +149,98 @@ def print_trace(trace: list) -> None:
             if len(content) > 400:
                 content = content[:400] + "..."
             print(f"  [{entry['role'].upper()}]\n  {content}\n")
+
+
+# ─── Fallback for text-based tool calls ──────────────────────────────────────
+
+def _extract_json_objects(text: str) -> list[dict]:
+    """Find all top-level JSON objects in text by matching balanced braces."""
+    objects: list[dict] = []
+    depth = 0
+    start = None
+    for i, ch in enumerate(text):
+        if ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and start is not None:
+                try:
+                    objects.append(json.loads(text[start : i + 1]))
+                except json.JSONDecodeError:
+                    pass
+                start = None
+    return objects
+
+
+def _parse_tool_calls_from_text(text: str, tool_map: dict) -> list[dict]:
+    """Extract tool-call dicts from model text that contains JSON instead of
+    proper function-calling output."""
+    calls: list[dict] = []
+    for obj in _extract_json_objects(text):
+        name = obj.get("name")
+        args = (
+            obj.get("arguments") or obj.get("parameters")
+            or obj.get("input") or {}
+        )
+        if isinstance(args, str):
+            try:
+                args = json.loads(args)
+            except json.JSONDecodeError:
+                continue
+        # MCP StructuredTools have a **kwargs signature, so the model may
+        # wrap the real args in {"kwargs": {...}} — unwrap if present.
+        if isinstance(args, dict) and list(args.keys()) == ["kwargs"]:
+            args = args["kwargs"]
+        if name and name in tool_map:
+            calls.append({"name": name, "args": args})
+    return calls
+
+
+def _run_query(agent, llm, tools, query: str, max_turns: int = 6) -> list[dict]:
+    """Invoke the agent; if it didn't execute tools, fall back to a
+    text-parsing ReAct loop.  Returns a trace list."""
+    result = agent.invoke({"messages": [("user", query)]})
+    has_tool_execution = any(
+        getattr(m, "type", "") == "tool" for m in result["messages"]
+    )
+    if has_tool_execution:
+        return extract_trace(result)
+
+    # Fallback: manual loop
+    tool_map = {t.name: t for t in tools}
+    tool_descs = "\n".join(f"  - {t.name}: {t.description}" for t in tools)
+    messages = [
+        SystemMessage(content=(
+            "You are a venue research agent.\nAvailable tools:\n" + tool_descs + "\n\n"
+            'To call a tool, output EXACTLY one JSON object:\n'
+            '{"name": "tool_name", "arguments": {"param": "value"}}\n\n'
+            "Wait for the tool result before calling another tool.\n"
+            "When done, give your final answer as plain text (no JSON)."
+        )),
+        HumanMessage(content=query),
+    ]
+    trace: list[dict] = [{"role": "human", "content": query}]
+    for _turn in range(max_turns):
+        resp = llm.invoke(messages)
+        content = resp.content or ""
+        parsed = _parse_tool_calls_from_text(content, tool_map)
+        if not parsed:
+            trace.append({"role": "ai", "content": content})
+            break
+        trace.append({"role": "ai", "content": content})
+        messages.append(AIMessage(content=content))
+        for call in parsed:
+            name, args = call["name"], call["args"]
+            trace.append({"role": "tool_call", "tool": name, "args": args})
+            try:
+                tool_result = tool_map[name].func(**args)
+            except Exception as e:
+                tool_result = json.dumps({"error": str(e)})
+            trace.append({"role": "tool", "content": str(tool_result)})
+            messages.append(HumanMessage(content=f"Tool result for {name}:\n{tool_result}"))
+    return trace
 
 
 async def main() -> None:
@@ -153,8 +265,7 @@ async def main() -> None:
     print(f"\n{'=' * 65}")
     print("  Query 1 — Search + Detail Fetch")
     print(f"{'=' * 65}\n")
-    r1     = agent.invoke({"messages": [("user", q1)]})
-    trace1 = extract_trace(r1)
+    trace1 = _run_query(agent, llm, tools, q1)
     print_trace(trace1)
     output["queries"]["query_1"] = {"query": q1, "trace": trace1}
 
@@ -163,8 +274,7 @@ async def main() -> None:
     print(f"\n{'=' * 65}")
     print("  Query 2 — Impossible Constraint")
     print(f"{'=' * 65}\n")
-    r2     = agent.invoke({"messages": [("user", q2)]})
-    trace2 = extract_trace(r2)
+    trace2 = _run_query(agent, llm, tools, q2)
     print_trace(trace2)
     output["queries"]["query_2"] = {"query": q2, "trace": trace2}
 
