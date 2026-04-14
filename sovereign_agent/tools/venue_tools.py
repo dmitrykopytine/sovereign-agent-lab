@@ -50,8 +50,6 @@ import os
 
 import requests
 from langchain_core.tools import tool
-from openai import OpenAI
-import os
 
 # ─── Venue database ───────────────────────────────────────────────────────────
 # In Week 2 this gets replaced with a real web search.

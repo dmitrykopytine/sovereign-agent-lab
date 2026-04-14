@@ -45,7 +45,7 @@ PART_B_CHANGED_RESULTS = False
 # Minimum 20 words.
 PART_B_HARDEST_DISTRACTOR = """
 The distractor which satisfies most of the criteria.
-The distractor which is close the the correct answer (Attention "blurs" adjacent similar items).
+The distractor which is staying close to the correct answer (attention "blurs" adjacent similar items).
 """
 
 # ── Part C ─────────────────────────────────────────────────────────────────
@@ -54,14 +54,16 @@ The distractor which is close the the correct answer (Attention "blurs" adjacent
 # Check outputs/ex1_results.json → "part_c_was_run"
 PART_C_WAS_RUN = True   # True or False
 
-PART_C_PLAIN_ANSWER    = "The Haymarket Vaults"
+PART_C_PLAIN_ANSWER    = "Haymarket Vaults"
 PART_C_XML_ANSWER      = "The Haymarket Vaults"
 PART_C_SANDWICH_ANSWER = "The Haymarket Vaults"
 
 # Explain what Part C showed, or why it wasn't needed. Minimum 30 words.
 PART_C_EXPLANATION = """
-The Part C provides correct answers, same as parts A and B.
-Many up-to-date models (even small ones) are good enough to handle the task we provided to them here.
+The Part C provides acceptable answers, but the plain input format made LLM lose 'The' in the venue name.
+
+It's difficult to make even a small contemporary model make a mistake in such a simple task.
+
 I managed to get wrong results on a small model with a more complicated question involving basic maths
 (asked "fits at least 80 more guests then just 80" and similar questions). In this case wrong answer 
 was the one with plain input. So in some cases input format matters, and separating lines with XML 
@@ -75,7 +77,8 @@ tags may be benefitial.
 
 CORE_LESSON = """
 Context formatting matters most when:
-- The model is small
-- The question is tricky (involving basic maths, etc.)
-- The input has many similar looking lines of text, and the LLM needs to separate them and select specific ones.
+  - The model is small.
+  - The input has distractions (similar looking items, partially satisfied conditions - like the ones we had 
+    in Parts B and C)
+  - The question is non-trivial (like when I changed the question to the one with basic maths).
 """

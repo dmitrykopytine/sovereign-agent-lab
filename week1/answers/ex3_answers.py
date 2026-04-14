@@ -87,15 +87,19 @@ Your input ->
 
 # Describe what CALM did after the out-of-scope message. Min 20 words.
 CONVERSATION_3_WHAT_HAPPENED = """
-The agent triggered the handle_out_of_scope flow and returned the message "I'm sorry, I'm not trained to help with that."
+The agent returned the message "I'm sorry, I'm not trained to help with that."
 Then it returned to the last non-answered question and asked it again.
 """
 
 # Compare Rasa CALM's handling of the out-of-scope request to what
 # LangGraph did in Exercise 2 Scenario 3. Min 40 words.
 OUT_OF_SCOPE_COMPARISON = """
-Rasa CALM handled the out-of-scope request by triggering the handle_out_of_scope flow and responding with a predefined message "I'm sorry, I'm not trained to help with that.".
-LangGraph answered to a non-domain question, which was not suitable in the context of the task being solved - booking a venue (but honestly we did not ask LLM not to do so).
+Rasa CALM handled the out-of-scope request by responding with a predefined message 
+"I'm sorry, I'm not trained to help with that.".
+
+LangGraph answered to a non-domain question, which was not suitable in the context 
+of the task being solved - booking a venue (but honestly in the case of LangGraph we 
+did not provide instructions to the LLM what is out-of-scope and how to handle it).
 """
 
 # ── Task B: Cutoff guard ───────────────────────────────────────────────────
@@ -107,7 +111,11 @@ TASK_B_FILES_CHANGED = ["exercise3_rasa/actions/actions.py"]
 
 # How did you test that it works? Min 20 words.
 TASK_B_HOW_YOU_TESTED = """
-I set the time condition to True, retrained rasa and ran the conversation. The agent asked all the questions and then escalated and returned the message "I need to check one thing with the organiser before I can confirm. The issue is: it is past 16:45 — insufficient time to process the confirmation before the 5 PM deadline. Can I call you back within 15 minutes?"
+I set the time condition to True, retrained rasa and ran the conversation. The agent 
+asked all the questions and then escalated and returned the message "I need to check 
+one thing with the organiser before I can confirm. The issue is: it is past 16:45 — 
+insufficient time to process the confirmation before the 5 PM deadline. Can I call 
+you back within 15 minutes?"
 """
 
 # ── CALM vs Old Rasa ───────────────────────────────────────────────────────
@@ -126,9 +134,12 @@ I set the time condition to True, retrained rasa and ran the conversation. The a
 # Min 30 words.
 
 CALM_VS_OLD_RASA = """
-LLM handles the language understanding now. Python handles the business rules.
+LLM handles the language understanding in CALM. Python handles the business rules.
+
 New approach can handle natural speech better.
-Old approach is less risky and 100% predictable. LLM can hallucinate and make mistakes. LLM may introduce security issues.
+
+Old approach is less risky and 100% predictable. LLM can hallucinate and make mistakes. 
+LLM may introduce security issues.
 """
 
 # ── The setup cost ─────────────────────────────────────────────────────────
@@ -142,9 +153,12 @@ Old approach is less risky and 100% predictable. LLM can hallucinate and make mi
 # Min 40 words.
 
 SETUP_COST_VALUE = """
-Rasa CALM is more algorithmic and predictable compared to LangGraph.
-Rasa CALM cannot ignore questions which are important for the business logic.
-Rasa CALM calls only predefined tools, without skipping/forgetting input parameters.
-Rasa CALM produces very predictable configurable responses.
-Rasa CALM, generally, has potentially less security issues compared to LangGraph.
+Rasa CALM is better (compared to LangGraph) because:
+  - it is more algorithmic and predictable compared to LangGraph.
+  - it is guaranteed to ask questions which are important for the business logic 
+    (e.g. vegan_count, deposit_amount_gbp).
+  - it calls predefined tools, without skipping/forgetting/guessing/hallucinating 
+    input parameters.
+  - it produces very predictable configurable responses.
+  - it, generally, has potentially less security issues compared to LangGraph.
 """

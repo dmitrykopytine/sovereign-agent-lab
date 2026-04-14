@@ -11,7 +11,12 @@ TOOLS_DISCOVERED = ['search_venues', 'get_venue_details']
 
 QUERY_1_VENUE_NAME    = "The Haymarket Vaults"
 QUERY_1_VENUE_ADDRESS = "1 Dalry Road, Edinburgh"
-QUERY_2_FINAL_ANSWER  = "It appears that there are no available venues in Edinburgh that can accommodate 300 people, regardless of dietary requirements. The search results are empty."
+QUERY_2_FINAL_ANSWER  = """
+It seems there are no Edinburgh venues currently available that can accommodate 300 guests with vegan options. Would you like me to:
+1. Search for venues with a lower minimum capacity?
+2. Check for venues with vegetarian options instead?
+3. Look for available venues without dietary restrictions?
+"""
 
 # ── The experiment ─────────────────────────────────────────────────────────
 # Required: modify venue_server.py, rerun, revert.
@@ -20,23 +25,33 @@ EX4_EXPERIMENT_DONE = True   # True or False
 
 # What changed, and which files did or didn't need updating? Min 30 words.
 EX4_EXPERIMENT_RESULT = """
-Changed file sovereign_agent/tools/mcp_venue_server.py
-Changed availability of The Albanach to 'full'.
-After that I ran the experiment again.
-Then I reverted the change.
-The result in my particular case did not change a lot, since the initial query responded with "The Haymarket Vaults", which is a valid answer for both queries (before and after making The Albanach 'full').
+What was changed:
+  - Changed file sovereign_agent/tools/mcp_venue_server.py
+  - Changed availability of The Albanach to 'full'.
+  - After that I ran the experiment again.
+  - Then I reverted the change.
+
+The result in my particular case did not change a lot, since the initial query responded 
+with "The Haymarket Vaults", which is a valid answer for both queries (before and after 
+making The Albanach 'full').
 """
 
 # ── MCP vs hardcoded ───────────────────────────────────────────────────────
 
+# Tools' function names in create_react_agent() call + related imports
 LINES_OF_TOOL_CODE_EX2 = 8   # count in exercise2_langgraph.py
-LINES_OF_TOOL_CODE_EX4 = 0   # count in exercise4_mcp_client.py
+# discover_tools() function, the result is then sent to create_react_agent()
+LINES_OF_TOOL_CODE_EX4 = 23   # count in exercise4_mcp_client.py
 
 # What does MCP buy you beyond "the tools are in a separate file"? Min 30 words.
 MCP_VALUE_PROPOSITION = """
-Automatic tool discovery - no need to hardcode tools and change agent's code when tools change.
-Tools can be improved separately from the agent (independent code/server) - easier to maintain.
-Not only separate file, but every tool may be launched on its own server on a hardware/environment best for the tool - easier to scale.
+Why MCP is better than hardcoded tools:
+  - Automatic tool discovery - no need to hardcode tools and change agent's code when 
+    tools change.
+  - Tools can be improved separately from the agent (independent code/server) - easier 
+    to maintain.
+  - Not only separate file, but every tool may be launched on its own server on a 
+    hardware/environment best for the tool - easier to scale.
 """
 
 # ── PyNanoClaw architecture — SPECULATION QUESTION ─────────────────────────
@@ -76,11 +91,20 @@ Not only separate file, but every tool may be launched on its own server on a ha
 #     ambiguous task.
 
 WEEK_5_ARCHITECTURE = """
-- Web search - actual search the web for Edinburgh pubs, reading venue websites.
-- Memory via CLAUDE.md - remember previous searches across sessions, learn from past bookings.
-- Planner-Executor architecture - plan autonomously: search → filter → verify → book → generate flyer.
-- Security sandboxing - make sure all external communications are safe and do not compromise the system.
-- Cost guardrails - prevent the agent from booking too expensive venues.
+Components:
+  - Planner - strong-reasoning model, part of the autonomous loop. Top-level thinking model 
+    which decides what to do next.
+  - Web searcher - tool which searches the web for Edinburgh pubs and returns information 
+    about the pubs, reading venue websites. Part of the autonomous loop (in an ideal 
+    architecture - independent tool available via MCP).
+  - Weather checker - tool which checks the weather in Edinburgh (independent tool available 
+    via MCP).
+  - Memory store - remembers previous searches across sessions (for the autonomous loop), also 
+    a shared layer to tranfer information between the autonomous loop and the structured agent.
+    It may also keep results of conversations done with the structured agent.
+  - Handoff bridge - routes human-conversation tasks to the structured-agent (a shared layer).
+  - Cost guardrails - prevents the agent from booking too expensive venues (part of the 
+    structured agent).
 """
 
 # ── The guiding question ───────────────────────────────────────────────────
@@ -88,13 +112,18 @@ WEEK_5_ARCHITECTURE = """
 # Must reference specific things you observed in your runs. Min 60 words.
 
 GUIDING_QUESTION_ANSWER = """
-The research agent needs better flexibility.
-LangGraph or and other solution with the loop (LLM -> tools -> LLM -> ...) can do this.
-Example include LangGraph from exercise2 or exercise4 (with manually added tools or automatic MCP-based tool discovery).
+Research agent:
+  - The research agent needs better flexibility.
+  - LangGraph or and other solution with the loop (LLM -> tools -> LLM -> ...) can do this.
+  - Examples include LangGraph from exercise2 or exercise4 (with manually added tools or 
+    automatic MCP-based tool discovery).
 
-For the call it's better to use something more structured like Rasa CALM.
-The reason - better predictability, connection with the buisiness domain (specific flows, parameters).
-Better for specific jobs with clear in/outs which need to be executed in a call (or chat) as a question-answer chain.
-LLM is used to parse natural language, but the flow is controlled by a strict algorithm.
-Example is exercise3.
+For the call:
+  - For the call it's better to use something more structured like Rasa CALM.
+  - The reason - better predictability, connection with the buisiness domain (specific flows 
+    and parameters - like 'vegan_count', 'deposit_amount_gbp').
+  - Better for specific jobs with clear in/outs which need to be executed in a call (or chat) 
+    as a question-answer chain.
+  - LLM is used to parse natural language, but the flow is controlled by a strict algorithm.
+  - Example is exercise3.
 """
