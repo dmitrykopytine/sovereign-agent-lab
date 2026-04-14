@@ -64,7 +64,8 @@ TASK_B_PROMPT_USED = "Professional event flyer for Edinburgh AI Meetup, tech pro
 # Why did the agent's behaviour NOT change when Nebius removed FLUX?
 # One sentence. This is the point of the lesson.
 TASK_B_WHY_AGENT_SURVIVED = """
-Fallback mechanism worked (deterministic placeholder).
+Fallback mechanism worked (deterministic placeholder) and returned success=True + image URL.
+So the agent was able to continue the flow.
 """
 
 # ── Task C ─────────────────────────────────────────────────────────────────
@@ -83,7 +84,7 @@ Quotes from the terminal output:
   [TOOL_RESULT]  ← check_pub_availability: {"success": true, "pub_name": "The Bow Bar", "address": "80 West Bow, Edinburgh", "capacity": 80, "vegan": true, "status": "full", "meets_all_constraints": false}
 ...
   <think>
-Okay, let's see. The user wanted to check The Bow Bar first for 160 vegan guests. The first tool response showed that The Bow Bar's capacity is 80, which is too small. So, they didn't meet the requirements. Then, the assistant checked The Albanach next.
+Okay, let's see. The user wanted to check The Bow Bar first for 160 vegan guests. The first tool call showed that The Bow Bar's capacity is only 80, which is too small. So then I checked The Albanach next. 
 ...
 """
 
@@ -95,9 +96,16 @@ SCENARIO_2_HALLUCINATED = False   # True or False
 
 # Paste the final [AI] message.
 SCENARIO_2_FINAL_ANSWER = """
-None of the known Edinburgh venues can accommodate 300 people with vegan options. The maximum capacity among the checked venues is 200 (The Guilford Arms), which still falls short of the required capacity. Would you like to:
-1. Search for alternative venues outside the known list?
-2. Adjust the event requirements (e.g., reduce guest count or split the event)?
+None of the four known Edinburgh venues can accommodate 300 people with vegan options:
+- The Albanach (180 capacity, vegan available)
+- Haymarket Vaults (160 capacity, vegan available)
+- Guilford Arms (200 capacity, no vegan)
+- Bow Bar (80 capacity, vegan available but full)
+
+Would you like me to:
+1. Suggest alternative venues outside this list?
+2. Help adjust requirements (e.g. split event across multiple venues)?
+3. Check availability for a different date?
 """
 
 # Scenario 3: out of scope (train times)
@@ -115,10 +123,14 @@ Would you like help with anything related to Edinburgh pubs, weather, or event p
 
 # Would this behaviour be acceptable in a real booking assistant? Min 30 words.
 SCENARIO_3_ACCEPTABLE = """
-The answer depends on the assistant requirements/specification.
-If it is a purely venue booking system, it should not have answered this question.
-If it is a headless assistant, and its result should be a completed job, it should probably not answer questions that do not produce artifacts via tool calls (completed booking, generated flyer, etc.).
-At the same time, if it is a booking assistant that allows for conversation, it may answer the question, because the answer can be part of the booking process (e.g. we need to find venues that are open until the departure of the last train for London tonight).
+The answer depends on the assistant requirements/specification:
+  - If it is a purely venue booking system, it should not have answered this question.
+  - If it is a headless assistant, and its result should be a completed job, it should 
+    probably not answer questions that do not produce artifacts via tool calls (completed 
+	booking, generated flyer, etc.). At the same time, if it is a booking assistant that 
+	allows for conversation, it may answer the question, because the answer can be part 
+	of the booking process (e.g. we need to find venues that are open until the departure 
+	of the last train for London tomorrow).
 """
 
 # ── Task D ─────────────────────────────────────────────────────────────────
@@ -165,7 +177,7 @@ in LangGraph how to fix it.
 
 MOST_SURPRISING = """
 The most surprising thing was that the model knew the list of pubs to be checked with 
-check_pub_availability() tool after (in Task A) it turned out that the The Bow Bar is full.
+check_pub_availability() tool after (in Task C) it turned out that the The Bow Bar is full.
 
 I first even thought that I missed some tool which lists all the pubs in Edinburgh.
 

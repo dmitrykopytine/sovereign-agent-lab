@@ -3,22 +3,22 @@
   "model_small": "google/gemma-2-2b-it",
   "part_a": {
     "PLAIN": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 180,
+      "answer": "The Albanach",
+      "tokens": 183,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "PLAIN"
     },
     "XML": {
       "answer": "The Albanach",
-      "tokens": 251,
+      "tokens": 255,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
       "answer": "The Albanach",
-      "tokens": 289,
+      "tokens": 297,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "SANDWICH"
@@ -26,22 +26,22 @@
   },
   "part_b": {
     "PLAIN": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 213,
+      "answer": "The Albanach",
+      "tokens": 216,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "PLAIN"
     },
     "XML": {
       "answer": "The Albanach",
-      "tokens": 302,
+      "tokens": 306,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
       "answer": "The Albanach",
-      "tokens": 340,
+      "tokens": 348,
       "model": "meta-llama/Llama-3.3-70B-Instruct",
       "correct": true,
       "condition": "SANDWICH"
@@ -50,24 +50,24 @@
   "part_c_was_run": true,
   "part_c": {
     "PLAIN": {
-      "answer": "Haymarket Vaults",
-      "tokens": 214,
+      "answer": "The Haymarket Vaults",
+      "tokens": 219,
       "model": "google/gemma-2-2b-it",
       "correct": true,
       "condition": "PLAIN"
     },
     "XML": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 316,
+      "answer": "The Albanach",
+      "tokens": 318,
       "model": "google/gemma-2-2b-it",
       "correct": true,
       "condition": "XML"
     },
     "SANDWICH": {
-      "answer": "The Haymarket Vaults",
-      "tokens": 357,
+      "answer": "The Ensign Ewart",
+      "tokens": 364,
       "model": "google/gemma-2-2b-it",
-      "correct": true,
+      "correct": false,
       "condition": "SANDWICH"
     }
   },

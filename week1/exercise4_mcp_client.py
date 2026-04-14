@@ -224,8 +224,8 @@ def print_trace(trace: list[dict]) -> None:
             print(f"  [TOOL_RESULT]  ← {entry.get('tool', '')}: {content}")
         elif entry.get("content"):
             content = entry["content"]
-            if len(content) > 400:
-                content = content[:400] + "..."
+            # if len(content) > 400:
+                # content = content[:400] + "..."
             print(f"  [{role.upper()}]\n  {content}\n")
 
 

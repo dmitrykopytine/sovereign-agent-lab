@@ -44,7 +44,7 @@ PART_B_CHANGED_RESULTS = False
 # Which distractor was more likely to cause a wrong answer, and why?
 # Minimum 20 words.
 PART_B_HARDEST_DISTRACTOR = """
-The distractor which satisfies most of the criteria.
+The distractor which satisfies most of the criteria (for example, the venue could be a match but it's 'full').
 The distractor which is staying close to the correct answer (attention "blurs" adjacent similar items).
 """
 
@@ -66,8 +66,8 @@ It's difficult to make even a small contemporary model make a mistake in such a 
 
 I managed to get wrong results on a small model with a more complicated question involving basic maths
 (asked "fits at least 80 more guests then just 80" and similar questions). In this case wrong answer 
-was the one with plain input. So in some cases input format matters, and separating lines with XML 
-tags may be benefitial.
+(The Ensign Ewart) was the one with plain input. So in some cases input format matters, and separating 
+lines with XML tags may be benefitial.
 """
 
 # ── Core lesson ────────────────────────────────────────────────────────────
@@ -77,8 +77,9 @@ tags may be benefitial.
 
 CORE_LESSON = """
 Context formatting matters most when:
-  - The model is small.
-  - The input has distractions (similar looking items, partially satisfied conditions - like the ones we had 
-    in Parts B and C)
-  - The question is non-trivial (like when I changed the question to the one with basic maths).
+  - The model is small (like google/gemma-2-2b-it used in Part C).
+  - The input has distractions (similar looking items, partially satisfied conditions - like 
+    the ones we had in Parts B and C)
+  - The question is non-trivial - like when I changed the question to the one with basic maths
+    ("fits at least 80 more guests then just 80"), it mistakenly responded with 'The Ensign Ewart'.
 """

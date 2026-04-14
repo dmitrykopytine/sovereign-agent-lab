@@ -89,8 +89,8 @@ def print_result(result: dict, label: str) -> None:
             print(f"  [TOOL_RESULT]  ← {entry.get('tool', '')}: {content}")
         else:
             content = entry.get("content", "")
-            if len(content) > 500:
-                content = content[:500] + "..."
+            # if len(content) > 500:
+                # content = content[:500] + "..."
             if content:
                 print(f"  [{role}]\n  {content}\n")
 

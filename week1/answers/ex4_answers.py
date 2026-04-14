@@ -12,10 +12,10 @@ TOOLS_DISCOVERED = ['search_venues', 'get_venue_details']
 QUERY_1_VENUE_NAME    = "The Haymarket Vaults"
 QUERY_1_VENUE_ADDRESS = "1 Dalry Road, Edinburgh"
 QUERY_2_FINAL_ANSWER  = """
-It seems there are no Edinburgh venues currently available that can accommodate 300 guests with vegan options. Would you like me to:
+It seems there are no Edinburgh venues currently available that can accommodate 300 people with vegan options. Would you like to:
 1. Search for venues with a lower minimum capacity?
-2. Check for venues with vegetarian options instead?
-3. Look for available venues without dietary restrictions?
+2. Look for venues without the vegan requirement?
+3. Check availability for a different date?
 """
 
 # ── The experiment ─────────────────────────────────────────────────────────
@@ -25,11 +25,11 @@ EX4_EXPERIMENT_DONE = True   # True or False
 
 # What changed, and which files did or didn't need updating? Min 30 words.
 EX4_EXPERIMENT_RESULT = """
-What was changed:
-  - Changed file sovereign_agent/tools/mcp_venue_server.py
-  - Changed availability of The Albanach to 'full'.
-  - After that I ran the experiment again.
-  - Then I reverted the change.
+I changed the file sovereign_agent/tools/mcp_venue_server.py (changed availability of 
+The Albanach to 'full').
+
+I did not need to update week1/exercise4_mcp_client.py, as the change was related only 
+to the tools available via MCP.
 
 The result in my particular case did not change a lot, since the initial query responded 
 with "The Haymarket Vaults", which is a valid answer for both queries (before and after 
@@ -94,17 +94,16 @@ WEEK_5_ARCHITECTURE = """
 Components:
   - Planner - strong-reasoning model, part of the autonomous loop. Top-level thinking model 
     which decides what to do next.
-  - Web searcher - tool which searches the web for Edinburgh pubs and returns information 
-    about the pubs, reading venue websites. Part of the autonomous loop (in an ideal 
-    architecture - independent tool available via MCP).
-  - Weather checker - tool which checks the weather in Edinburgh (independent tool available 
-    via MCP).
+  - MCP server with research tools. Used by the autonomous loop. The tools may include:
+    venue search, venue details (potentially split into fetch-parse-fetch-parse-...-return 
+    logic), weather checker.
   - Memory store - remembers previous searches across sessions (for the autonomous loop), also 
     a shared layer to tranfer information between the autonomous loop and the structured agent.
     It may also keep results of conversations done with the structured agent.
   - Handoff bridge - routes human-conversation tasks to the structured-agent (a shared layer).
-  - Cost guardrails - prevents the agent from booking too expensive venues (part of the 
-    structured agent).
+  - Interaction/observability layer. For both parts. Manages cost guiderails, logging,
+    heartbeat. Accepts human input with the task and makes sure important details are passed 
+    to the user: deposit, flyer URL, etc.
 """
 
 # ── The guiding question ───────────────────────────────────────────────────
@@ -112,18 +111,18 @@ Components:
 # Must reference specific things you observed in your runs. Min 60 words.
 
 GUIDING_QUESTION_ANSWER = """
-Research agent:
-  - The research agent needs better flexibility.
-  - LangGraph or and other solution with the loop (LLM -> tools -> LLM -> ...) can do this.
-  - Examples include LangGraph from exercise2 or exercise4 (with manually added tools or 
-    automatic MCP-based tool discovery).
+Research agent should be flexible. LangGraph or and other solution with the generic loop 
+(LLM -> tools -> LLM -> ...) can work well for this.
 
-For the call:
-  - For the call it's better to use something more structured like Rasa CALM.
-  - The reason - better predictability, connection with the buisiness domain (specific flows 
-    and parameters - like 'vegan_count', 'deposit_amount_gbp').
-  - Better for specific jobs with clear in/outs which need to be executed in a call (or chat) 
-    as a question-answer chain.
-  - LLM is used to parse natural language, but the flow is controlled by a strict algorithm.
-  - Example is exercise3.
+For the call it's better to use something more structured like Rasa CALM. LLM is used 
+there to parse natural language, but the flow is controlled by a strict algorithm. For example,
+in ex3 Rasa CALM guaranteed all three variables (guest_count, vegan_count, deposit_amount_gbp) 
+were collected before running the business logic.
+
+Using research agent for the call would be risky (less predictable, less reliable).
+
+Using the call agent/logic for research would be inefficient - too strict, requiring too much
+domain-specific configuration. For example, in ex2 and ex4 LangGraph's LLM could decide which 
+venues to check and in which order. Such flexibility is not possible or difficult to implement 
+with the call agent/logic.
 """

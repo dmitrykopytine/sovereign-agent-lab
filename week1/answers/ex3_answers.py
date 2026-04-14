@@ -136,10 +136,13 @@ you back within 15 minutes?"
 CALM_VS_OLD_RASA = """
 LLM handles the language understanding in CALM. Python handles the business rules.
 
-New approach can handle natural speech better.
+New approach can handle natural speech better (for example, I can even answer 
+'40 + 4 speakers' and it will understand that it's 44 people - such things cannot be 
+reliably handled by regular expressions).
 
 Old approach is less risky and 100% predictable. LLM can hallucinate and make mistakes. 
-LLM may introduce security issues.
+LLM may introduce security issues (for example, disclose internal information if used 
+incorrectly/unsafely).
 """
 
 # ── The setup cost ─────────────────────────────────────────────────────────
