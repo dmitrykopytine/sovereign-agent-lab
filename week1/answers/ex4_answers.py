@@ -111,7 +111,7 @@ Components:
 # Must reference specific things you observed in your runs. Min 60 words.
 
 GUIDING_QUESTION_ANSWER = """
-Research agent should be flexible. LangGraph or and other solution with the generic loop 
+Research agent should be flexible. LangGraph or any other solution with the generic loop 
 (LLM -> tools -> LLM -> ...) can work well for this.
 
 For the call it's better to use something more structured like Rasa CALM. LLM is used 
